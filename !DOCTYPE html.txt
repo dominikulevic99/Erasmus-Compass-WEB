@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erasmus Compass</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 10px; 
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+        .header h1 { 
+            color: #667eea; 
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p { 
+            color: #666; 
+            font-size: 14px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .question {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .question label {
+            display: block;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+        .score-display {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .weight-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .weight-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .weight-row label {
+            font-weight: 500;
+            color: #333;
+        }
+        .total-weight {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 30px;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .result-item {
+            background: white;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #667eea;
+        }
+        .result-label {
+            color: #666;
+            font-size: 13px;
+        }
+        .result-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 5px;
+        }
+        .recommendation {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .recommendation.strong { background: #c3fdd3; color: #155724; }
+        .recommendation.positive { background: #d1ecf1; color: #0c5460; }
+        .recommendation.balanced { background: #fff3cd; color: #856404; }
+        .recommendation.uncertain { background: #f8d7da; color: #721c24; }
+        .recommendation.not-recommended { background: #f8d7da; color: #721c24; }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            display: none;
+        }
+        .scale-info {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧭 ERASMUS COMPASS</h1>
+            <p>Evaluate whether Erasmus is the right decision for you</p>
+        </div>
+
+        <div class="error" id="errorMessage"></div>
+
+        <div id="surveySection">
+            <div class="section-title">Step 1 — Survey Questions</div>
+            <div class="scale-info">
+                Rate each statement from 1 to 5 (1 = strongly disagree, 5 = strongly agree)
+            </div>
+
+            <div class="question">
+                <label>Erasmus will help me grow as a person.</label>
+                <div class="slider-container">
+                    <input type="range" name="growth" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>Erasmus will improve my future career opportunities.</label>
+                <div class="slider-container">
+                    <input type="range" name="career" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>Erasmus is financially manageable for me.</label>
+                <div class="slider-container">
+                    <input type="range" name="finance" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>If Erasmus does not go as planned, I can recover from the decision.</label>
+                <div class="slider-container">
+                    <input type="range" name="reversibility" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>I am ready to handle daily life in another country.</label>
+                <div class="slider-container">
+                    <input type="range" name="independence" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>I think I would regret not taking this opportunity.</label>
+                <div class="slider-container">
+                    <input type="range" name="regret" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>I feel emotionally ready to live and study abroad.</label>
+                <div class="slider-container">
+                    <input type="range" name="emotional" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <label>When I think about Erasmus, I feel more excited than afraid.</label>
+                <div class="slider-container">
+                    <input type="range" name="excitement" min="1" max="5" value="3" class="slider">
+                    <div class="score-display"><span class="value">3</span>/5</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="weightSection">
+            <div class="section-title">Step 2 — Set Your Priorities</div>
+            <div class="scale-info">
+                Assign weights (0-100) that sum to exactly 100
+            </div>
+
+            <div class="weight-row">
+                <label>Personal achievement development:</label>
+                <input type="number" name="pad-weight" min="0" max="100" value="25" class="weight-input">
+            </div>
+
+            <div class="weight-row">
+                <label>Financial:</label>
+                <input type="number" name="fin-weight" min="0" max="100" value="25" class="weight-input">
+            </div>
+
+            <div class="weight-row">
+                <label>Risk:</label>
+                <input type="number" name="risk-weight" min="0" max="100" value="25" class="weight-input">
+            </div>
+
+            <div class="weight-row">
+                <label>Psychological:</label>
+                <input type="number" name="psych-weight" min="0" max="100" value="25" class="weight-input">
+            </div>
+
+            <div class="total-weight">
+                <span>Total Weight:</span>
+                <span id="totalWeight">100</span>/100
+            </div>
+        </div>
+
+        <button onclick="calculateResult()">Calculate Results</button>
+
+        <div class="result" id="result">
+            <h2>📊 RESULT</h2>
+            <div class="result-item">
+                <div class="result-label">Expected Utility</div>
+                <div class="result-value"><span id="utility"></span> / 5</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Decision Score</div>
+                <div class="result-value"><span id="percentage"></span>%</div>
+            </div>
+            <div id="recommendation" class="recommendation"></div>
+        </div>
+    </div>
+
+    <script>
+        // Update score display when slider changes
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                this.parentElement.querySelector('.value').textContent = this.value;
+            });
+        });
+
+        // Update weight total in real-time
+        document.querySelectorAll('.weight-input').forEach(input => {
+            input.addEventListener('input', updateWeightTotal);
+        });
+
+        function updateWeightTotal() {
+            const total = Array.from(document.querySelectorAll('.weight-input'))
+                .reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
+            document.getElementById('totalWeight').textContent = total;
+        }
+
+        function calculateResult() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+
+            // Collect scores
+            const scores = {};
+            document.querySelectorAll('.slider').forEach(slider => {
+                scores[slider.name] = parseInt(slider.value);
+            });
+
+            // Collect weights
+            const weights = {
+                'Personal achievement development': parseInt(document.querySelector('input[name="pad-weight"]').value) || 0,
+                'Financial': parseInt(document.querySelector('input[name="fin-weight"]').value) || 0,
+                'Risk': parseInt(document.querySelector('input[name="risk-weight"]').value) || 0,
+                'Psychological': parseInt(document.querySelector('input[name="psych-weight"]').value) || 0
+            };
+
+            // Validate total weight
+            const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
+            if (totalWeight !== 100) {
+                errorDiv.textContent = `❌ Weights must sum to 100 (current total: ${totalWeight})`;
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Send to backend
+            fetch('/api/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ scores, weights })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorDiv.textContent = `❌ ${data.error}`;
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                displayResults(data);
+            })
+            .catch(error => {
+                errorDiv.textContent = '❌ Error calculating results. Please try again.';
+                errorDiv.style.display = 'block';
+            });
+        }
+
+        function displayResults(data) {
+            document.getElementById('utility').textContent = data.expected_utility;
+            document.getElementById('percentage').textContent = data.utility_percentage;
+            
+            let recommendation = '';
+            let recClass = '';
+            if (data.utility_percentage >= 85) {
+                recommendation = '✅ STRONG RECOMMENDATION: GO TO ERASMUS';
+                recClass = 'strong';
+            } else if (data.utility_percentage >= 70) {
+                recommendation = '✅ POSITIVE RECOMMENDATION: ERASMUS IS PROBABLY WORTH IT';
+                recClass = 'positive';
+            } else if (data.utility_percentage >= 55) {
+                recommendation = '⚠️ BALANCED DECISION: THINK CAREFULLY';
+                recClass = 'balanced';
+            } else if (data.utility_percentage >= 40) {
+                recommendation = '⚠️ HIGH UNCERTAINTY: PREPARE MORE BEFORE DECIDING';
+                recClass = 'uncertain';
+            } else {
+                recommendation = '❌ NOT RECOMMENDED RIGHT NOW';
+                recClass = 'not-recommended';
+            }
+            
+            const recDiv = document.getElementById('recommendation');
+            recDiv.textContent = recommendation;
+            recDiv.className = 'recommendation ' + recClass;
+            document.getElementById('result').classList.add('show');
+        }
+    </script>
+</body>
+</html>
